@@ -65,7 +65,6 @@ async function run(): Promise<void> {
           repo: context.repo.repo,
           release_id: release.data.id,
           name: file.target,
-          baseUrl: 'https://api.github.com',
           data
         })
         core.info(

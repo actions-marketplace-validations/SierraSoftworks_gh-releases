@@ -118,7 +118,6 @@ function run() {
                     repo: github_1.context.repo.repo,
                     release_id: release.data.id,
                     name: file.target,
-                    baseUrl: 'https://api.github.com',
                     data
                 });
                 core.info(`Uploaded file ${file.target}, permalink is: ${upload.data.browser_download_url}`);
