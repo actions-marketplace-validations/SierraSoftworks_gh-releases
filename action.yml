@@ -10,7 +10,7 @@ inputs:
     description: |
       The GitHub access token which will be used to upload release artifacts.
 
-      Usually this will be `${{ secrets.GITHUB_TOKEN }}`.
+      Usually this will be `secrets.GITHUB_TOKEN`.
 
   files:
     required: true
