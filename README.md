@@ -7,7 +7,7 @@ about how they publish artifacts.
 ## Usage
 
 ```yaml
-uses: SierraSoftworks/gh-releases@v1.0.0
+uses: SierraSoftworks/gh-releases@v1.0.1
 with:
   token: ${{ secrets.GITHUB_TOKEN }}
   files: |
