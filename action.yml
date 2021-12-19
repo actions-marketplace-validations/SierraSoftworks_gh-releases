@@ -26,6 +26,11 @@ inputs:
           - bin/release-linux
       ```
 
+  overwrite:
+    required: false
+    description: |
+      Overwrite existing artifacts with the same name for the specified release.
+
   release_tag:
     required: false
     description: |

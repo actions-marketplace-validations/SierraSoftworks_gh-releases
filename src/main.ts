@@ -32,8 +32,26 @@ async function run(): Promise<void> {
       `Found release ${release.data.tag_name} with ID ${release.data.id}`
     )
 
-    if (!files.length) {
-      throw new Error('No files were specified in the action input.')
+    const overwrite = core.getBooleanInput('overwrite', {required: false})
+    if (overwrite) {
+      const filesToUpload = files.map(f => f.target)
+      const assetsToOverwrite = release.data.assets.filter(asset =>
+        filesToUpload.includes(asset.name)
+      )
+
+      if (assetsToOverwrite.length) {
+        core.debug(`Removing ${assetsToOverwrite.length} existing assets`)
+        await Promise.all(
+          assetsToOverwrite.map(
+            async asset =>
+              await octokit.rest.repos.deleteReleaseAsset({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                asset_id: asset.id
+              })
+          )
+        )
+      }
     }
 
     await Promise.all(

@@ -94,8 +94,20 @@ function run() {
                 tag: releaseTag
             });
             core.debug(`Found release ${release.data.tag_name} with ID ${release.data.id}`);
-            if (!files.length) {
-                throw new Error('No files were specified in the action input.');
+            const overwrite = core.getBooleanInput('overwrite', { required: false });
+            if (overwrite) {
+                const filesToUpload = files.map(f => f.target);
+                const assetsToOverwrite = release.data.assets.filter(asset => filesToUpload.includes(asset.name));
+                if (assetsToOverwrite.length) {
+                    core.debug(`Removing ${assetsToOverwrite.length} existing assets`);
+                    yield Promise.all(assetsToOverwrite.map((asset) => __awaiter(this, void 0, void 0, function* () {
+                        return yield octokit.rest.repos.deleteReleaseAsset({
+                            owner: github_1.context.repo.owner,
+                            repo: github_1.context.repo.repo,
+                            asset_id: asset.id
+                        });
+                    })));
+                }
             }
             yield Promise.all(files.map((file) => __awaiter(this, void 0, void 0, function* () {
                 core.debug(`Reading file ${file.source}`);
@@ -106,6 +118,7 @@ function run() {
                     repo: github_1.context.repo.repo,
                     release_id: release.data.id,
                     name: file.target,
+                    baseUrl: 'https://api.github.com',
                     data
                 });
                 core.info(`Uploaded file ${file.target}, permalink is: ${upload.data.browser_download_url}`);
