@@ -1,39 +1,6 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 1743:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.readFile = void 0;
-const fs_1 = __nccwpck_require__(5747);
-function readFile(path) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve, reject) => {
-            (0, fs_1.readFile)(path, 'utf8', (err, data) => {
-                if (err)
-                    return reject(err);
-                resolve(data);
-            });
-        });
-    });
-}
-exports.readFile = readFile;
-
-
-/***/ }),
-
 /***/ 3109:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -72,7 +39,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const github_1 = __nccwpck_require__(5438);
 const release_1 = __nccwpck_require__(878);
 const parser_1 = __nccwpck_require__(267);
-const files_1 = __nccwpck_require__(1743);
+const promises_1 = __nccwpck_require__(9225);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -111,14 +78,14 @@ function run() {
             }
             yield Promise.all(files.map((file) => __awaiter(this, void 0, void 0, function* () {
                 core.debug(`Reading file ${file.source}`);
-                const data = yield (0, files_1.readFile)(file.source);
+                const data = yield (0, promises_1.readFile)(file.source);
                 core.debug(`Uploading file ${file.target} (${data.length} bytes)`);
                 const upload = yield octokit.rest.repos.uploadReleaseAsset({
                     owner: github_1.context.repo.owner,
                     repo: github_1.context.repo.repo,
                     release_id: release.data.id,
                     name: file.target,
-                    data
+                    data: data
                 });
                 core.info(`Uploaded file ${file.target}, permalink is: ${upload.data.browser_download_url}`);
             })));
@@ -8525,6 +8492,14 @@ module.exports = require("events");
 
 "use strict";
 module.exports = require("fs");
+
+/***/ }),
+
+/***/ 9225:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs/promises");
 
 /***/ }),
 

@@ -60,12 +60,13 @@ async function run(): Promise<void> {
         const data = await readFile(file.source)
 
         core.debug(`Uploading file ${file.target} (${data.length} bytes)`)
+
         const upload = await octokit.rest.repos.uploadReleaseAsset({
           owner: context.repo.owner,
           repo: context.repo.repo,
           release_id: release.data.id,
           name: file.target,
-          data: data.toString('binary')
+          data: data as unknown as string
         })
         core.info(
           `Uploaded file ${file.target}, permalink is: ${upload.data.browser_download_url}`
