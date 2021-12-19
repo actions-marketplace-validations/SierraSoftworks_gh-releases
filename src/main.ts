@@ -2,7 +2,7 @@ import * as core from '@actions/core'
 import {context, getOctokit} from '@actions/github'
 import {getReleaseTag} from './release'
 import {parseFileSpec} from './parser'
-import {readFile} from './files'
+import {readFile} from 'fs/promises'
 
 async function run(): Promise<void> {
   try {
@@ -65,7 +65,7 @@ async function run(): Promise<void> {
           repo: context.repo.repo,
           release_id: release.data.id,
           name: file.target,
-          data
+          data: data.toString('binary')
         })
         core.info(
           `Uploaded file ${file.target}, permalink is: ${upload.data.browser_download_url}`
