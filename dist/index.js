@@ -125,8 +125,10 @@ function run() {
             })));
         }
         catch (error) {
-            if (error instanceof Error)
+            if (error instanceof Error) {
                 core.setFailed(error.message);
+                error.stack && core.error(error.stack);
+            }
         }
     });
 }
