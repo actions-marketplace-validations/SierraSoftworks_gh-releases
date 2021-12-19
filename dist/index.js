@@ -2,19 +2,30 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 1743:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.readFile = void 0;
 const fs_1 = __nccwpck_require__(5747);
 function readFile(path) {
-    return new Promise((resolve, reject) => {
-        (0, fs_1.readFile)(path, 'utf8', (err, data) => {
-            if (err)
-                return reject(err);
-            resolve(data);
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            (0, fs_1.readFile)(path, 'utf8', (err, data) => {
+                if (err)
+                    return reject(err);
+                resolve(data);
+            });
         });
     });
 }
@@ -59,13 +70,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const github_1 = __nccwpck_require__(5438);
-const files_1 = __nccwpck_require__(1743);
-const parser_1 = __nccwpck_require__(267);
 const release_1 = __nccwpck_require__(878);
+const parser_1 = __nccwpck_require__(267);
+const files_1 = __nccwpck_require__(1743);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const files = core.getMultilineInput('files', { required: true }).map(parser_1.parseFileSpec);
+            const files = core
+                .getMultilineInput('files', { required: true })
+                .map(parser_1.parseFileSpec);
             if (!files.length) {
                 core.warning('No files were specified, nothing to do.');
                 return;
@@ -78,7 +91,7 @@ function run() {
             const release = yield octokit.rest.repos.getReleaseByTag({
                 owner: github_1.context.repo.owner,
                 repo: github_1.context.repo.repo,
-                tag: releaseTag,
+                tag: releaseTag
             });
             core.debug(`Found release ${release.data.tag_name} with ID ${release.data.id}`);
             if (!files.length) {
@@ -93,7 +106,7 @@ function run() {
                     repo: github_1.context.repo.repo,
                     release_id: release.data.id,
                     name: file.target,
-                    data: data,
+                    data
                 });
                 core.info(`Uploaded file ${file.target}, permalink is: ${upload.data.browser_download_url}`);
             })));
@@ -118,7 +131,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.parseFileSpec = exports.parseFilesList = void 0;
 const path_1 = __nccwpck_require__(5622);
 function parseFilesList(files) {
-    return (files || '').split('\n')
+    return (files || '')
+        .split('\n')
         .map(file => file.trim())
         .filter(file => !!file)
         .map(parseFileSpec);
