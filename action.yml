@@ -1,8 +1,6 @@
 name: Publish GitHub Release Artifacts
 description: |
-  This action publishes files from GitHub Actions as artifacts on a GitHub release.
-  It is intended to be run within a `release` workflow, however can also be executed
-  within a `push` workflow if required.
+  This action uploads GitHub Actions build artifacts to a GitHub Release.
 author: Sierra Softworks
 inputs:
   token:
