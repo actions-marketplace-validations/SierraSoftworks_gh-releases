@@ -16,3 +16,21 @@ with:
     bar.txt
     fizz.txt | buzz.txt
 ```
+
+### Signing Artifacts using Hashicorp Vault
+
+```yaml
+uses: SierraSoftworks/gh-releases@v1.0.4
+with:
+  token: ${{ secrets.GITHUB_TOKEN }}
+  overwrite: 'true'
+  files: |
+    foo.txt
+    bar.txt
+    fizz.txt | buzz.txt
+  vault-server: https://vault.example.com
+  vault-token: ${{ secrets.VAULT_TOKEN }}
+  vault-path: transit
+  vault-signing-key: github-signing-key
+  vault-hash-algorithm: sha2-256
+```

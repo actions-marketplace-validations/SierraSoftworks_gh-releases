@@ -3,13 +3,6 @@ description: |
   This action uploads GitHub Actions build artifacts to a GitHub Release.
 author: Sierra Softworks
 inputs:
-  token:
-    required: true
-    description: |
-      The GitHub access token which will be used to upload release artifacts.
-
-      Usually this will be `secrets.GITHUB_TOKEN`.
-
   files:
     required: true
     description: |
@@ -24,6 +17,13 @@ inputs:
           - bin/release-linux
       ```
 
+  token:
+    required: false
+    description: |
+      The GitHub access token which will be used to upload release artifacts.
+
+      Usually this will be `secrets.GITHUB_TOKEN`.
+
   overwrite:
     required: false
     description: |
@@ -36,6 +36,31 @@ inputs:
       
       By default this will be discovered based on the build environment, however
       you may specify it here if automatic discovery does not work for your usecase.
+
+  vault-server:
+    required: false
+    description: |
+      The Hashicorp Vault server which should be used to generate signatures.
+
+  vault-token:
+    required: false
+    description: |
+      The token used to access Hashicorp Vault for generation of signatures.
+
+  vault-path:
+    required: false
+    description: |
+      The path that the Vault transit engine is mounted at (defaults to 'transit')
+
+  vault-signing-key:
+    required: false
+    description: |
+      The name of the signing key to use for signature generation through Vault.
+
+  vault-hash-algorithm:
+    required: false
+    description: |
+      The hash algorithm which should be used to generate a unique hash for the content being signed.
 
 runs:
   using: 'node16'

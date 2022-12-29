@@ -3,6 +3,7 @@ import {context, getOctokit} from '@actions/github'
 import {getReleaseTag} from './release'
 import {parseFileSpec} from './parser'
 import {readFile} from 'fs/promises'
+import {getSignatures} from './vault'
 
 async function run(): Promise<void> {
   try {
@@ -70,6 +71,26 @@ async function run(): Promise<void> {
         })
         core.info(
           `Uploaded file ${file.target}, permalink is: ${upload.data.browser_download_url}`
+        )
+      })
+    )
+
+    const signatures = await getSignatures(files)
+    core.debug(`Received ${signatures.length} signatures from Vault`)
+
+    await Promise.all(
+      signatures.map(async signature => {
+        core.debug(`Uploading signature ${signature.file}.sig`)
+
+        const upload = await octokit.rest.repos.uploadReleaseAsset({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          release_id: release.data.id,
+          name: `${signature.file}.sig`,
+          data: signature.signature
+        })
+        core.info(
+          `Uploaded signature ${signature.file}, permalink is: ${upload.data.browser_download_url}`
         )
       })
     )
