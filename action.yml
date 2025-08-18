@@ -33,7 +33,7 @@ inputs:
     required: false
     description: |
       The release tag which should receive the artifacts.
-      
+
       By default this will be discovered based on the build environment, however
       you may specify it here if automatic discovery does not work for your usecase.
 
@@ -65,7 +65,7 @@ inputs:
 runs:
   using: 'node16'
   main: 'dist/index.js'
-  
+
 branding:
   icon: 'archive'
   color: 'gray-dark'

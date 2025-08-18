@@ -1,4 +1,4 @@
-import {basename} from 'path'
+import { basename } from 'path'
 
 export interface FileSpec {
   source: string
@@ -8,16 +8,16 @@ export interface FileSpec {
 export function parseFilesList(files: string | null): FileSpec[] {
   return (files || '')
     .split('\n')
-    .map(file => file.trim())
-    .filter(file => !!file)
+    .map((file) => file.trim())
+    .filter((file) => !!file)
     .map(parseFileSpec)
 }
 
 export function parseFileSpec(file: string): FileSpec {
   const parts = file.split(' | ')
   if (parts.length < 2) {
-    return {source: file, target: basename(file)}
+    return { source: file, target: basename(file) }
   }
 
-  return {source: parts[0].trim(), target: parts[1].trim()}
+  return { source: parts[0].trim(), target: parts[1].trim() }
 }

@@ -1,14 +1,14 @@
 import * as core from '@actions/core'
-import {context, getOctokit} from '@actions/github'
-import {getReleaseTag} from './release'
-import {parseFileSpec} from './parser'
-import {readFile} from 'fs/promises'
-import {getSignatures} from './vault'
+import { context, getOctokit } from '@actions/github'
+import { getReleaseTag } from './release.js'
+import { parseFileSpec } from './parser.js'
+import { readFile } from 'fs/promises'
+import { getSignatures } from './vault.js'
 
-async function run(): Promise<void> {
+export async function run(): Promise<void> {
   try {
     const files = core
-      .getMultilineInput('files', {required: true})
+      .getMultilineInput('files', { required: true })
       .map(parseFileSpec)
 
     if (!files.length) {
@@ -16,7 +16,7 @@ async function run(): Promise<void> {
       return
     }
 
-    const token: string = core.getInput('token', {required: true})
+    const token: string = core.getInput('token', { required: true })
     const octokit = getOctokit(token)
 
     const releaseTag = getReleaseTag()
@@ -33,10 +33,10 @@ async function run(): Promise<void> {
       `Found release ${release.data.tag_name} with ID ${release.data.id}`
     )
 
-    const overwrite = core.getBooleanInput('overwrite', {required: false})
+    const overwrite = core.getBooleanInput('overwrite', { required: false })
     if (overwrite) {
-      const filesToUpload = files.map(f => f.target)
-      const assetsToOverwrite = release.data.assets.filter(asset =>
+      const filesToUpload = files.map((f) => f.target)
+      const assetsToOverwrite = release.data.assets.filter((asset) =>
         filesToUpload.includes(asset.name)
       )
 
@@ -44,7 +44,7 @@ async function run(): Promise<void> {
         core.debug(`Removing ${assetsToOverwrite.length} existing assets`)
         await Promise.all(
           assetsToOverwrite.map(
-            async asset =>
+            async (asset) =>
               await octokit.rest.repos.deleteReleaseAsset({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -56,7 +56,7 @@ async function run(): Promise<void> {
     }
 
     await Promise.all(
-      files.map(async file => {
+      files.map(async (file) => {
         core.debug(`Reading file ${file.source}`)
         const data = await readFile(file.source)
 
@@ -79,7 +79,7 @@ async function run(): Promise<void> {
     core.debug(`Received ${signatures.length} signatures from Vault`)
 
     await Promise.all(
-      signatures.map(async signature => {
+      signatures.map(async (signature) => {
         core.debug(`Uploading signature ${signature.file}.sig`)
 
         const upload = await octokit.rest.repos.uploadReleaseAsset({
@@ -97,9 +97,9 @@ async function run(): Promise<void> {
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message)
-      error.stack && core.error(error.stack)
+      if (error.stack) {
+        core.error(error.stack)
+      }
     }
   }
 }
-
-run()
