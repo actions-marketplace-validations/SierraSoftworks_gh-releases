@@ -1,8 +1,9 @@
 # Publish GitHub Release Artifacts
-This GitHub Action will publish artifacts from a build pipeline to a GitHub Release.
-It is a lightweight wrapper around the `oktokit` library and strives to be as simple
-as possible such that it may be easily audited by teams who may otherwise be cautious
-about how they publish artifacts.
+
+This GitHub Action will publish artifacts from a build pipeline to a GitHub
+Release. It is a lightweight wrapper around the `oktokit` library and strives to
+be as simple as possible such that it may be easily audited by teams who may
+otherwise be cautious about how they publish artifacts.
 
 ## Usage
 

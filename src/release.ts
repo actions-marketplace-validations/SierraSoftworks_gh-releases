@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {context} from '@actions/github'
+import { context } from '@actions/github'
 export function getReleaseTag(): string {
   const tag =
     core.getInput('release_tag') || getReleaseActionTag() || getRefTag()

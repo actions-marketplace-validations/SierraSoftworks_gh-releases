@@ -1,8 +1,8 @@
 import * as core from '@actions/core'
-import {FileSpec} from './parser'
-import {createHash, Hash} from 'crypto'
-import {readFile} from 'fs/promises'
-import {request} from 'https'
+import { FileSpec } from './parser'
+import { createHash, Hash } from 'crypto'
+import { readFile } from 'fs/promises'
+import { request } from 'https'
 
 type HashAlgorithmType = 'sha2-256' | 'sha2-384' | 'sha2-512'
 
@@ -20,14 +20,15 @@ export interface SignatureSpec {
 export async function getSignatures(
   files: FileSpec[]
 ): Promise<SignatureSpec[]> {
-  const vaultServer = core.getInput('vault-server', {required: false})
+  const vaultServer = core.getInput('vault-server', { required: false })
   if (!vaultServer) {
     return []
   }
 
-  const vaultToken = core.getInput('vault-token', {required: true})
-  const vaultPath = core.getInput('vault-path', {required: false}) || 'transit'
-  const vaultKey = core.getInput('vault-signing-key', {required: true})
+  const vaultToken = core.getInput('vault-token', { required: true })
+  const vaultPath =
+    core.getInput('vault-path', { required: false }) || 'transit'
+  const vaultKey = core.getInput('vault-signing-key', { required: true })
   const vaultHashAlgorithm: HashAlgorithmType =
     (core.getInput('vault-hash-algorithm', {
       required: false
@@ -36,7 +37,7 @@ export async function getSignatures(
   const hashes = await getHashes(vaultHashAlgorithm, files)
 
   const signatures = await batchSignWithVault(
-    hashes.map(h => h.signature),
+    hashes.map((h) => h.signature),
     {
       vaultServer,
       vaultToken,
@@ -51,11 +52,11 @@ export async function getSignatures(
       file: hashes[index].file,
       error: signature.error
     }))
-    .filter(s => s.error)
+    .filter((s) => s.error)
   if (signingErrors.length > 0) {
     throw new Error(
       `Vault server returned errors for one or more files: ${signingErrors
-        .map(s => `${s.file}: ${s.error}`)
+        .map((s) => `${s.file}: ${s.error}`)
         .join(', ')}`
     )
   }
@@ -71,10 +72,10 @@ async function getHashes(
   files: FileSpec[]
 ): Promise<SignatureSpec[]> {
   return await Promise.all(
-    files.map(async file => {
+    files.map(async (file) => {
       const signature = getHash(algorithm)
 
-      await readFile(file.source, {encoding: 'binary'}).then(data =>
+      await readFile(file.source, { encoding: 'binary' }).then((data) =>
         signature.update(data, 'binary')
       )
 
@@ -107,7 +108,7 @@ async function batchSignWithVault(
     vaultKey: string
     vaultHashAlgorithm: HashAlgorithmType
   }
-): Promise<{signature?: string; error?: string}[]> {
+): Promise<{ signature?: string; error?: string }[]> {
   const vaultServerUrl = new URL(options.vaultServer)
 
   return new Promise((resolve, reject) => {
@@ -122,9 +123,9 @@ async function batchSignWithVault(
           'X-Vault-Token': options.vaultToken
         }
       },
-      res => {
+      (res) => {
         let data = ''
-        res.on('data', chunk => {
+        res.on('data', (chunk) => {
           data += chunk
         })
         res.on('end', () => {
@@ -138,20 +139,23 @@ async function batchSignWithVault(
           }
 
           resolve(
-            result.data.batch_results as {signature?: string; error?: string}[]
+            result.data.batch_results as {
+              signature?: string
+              error?: string
+            }[]
           )
         })
       }
     )
 
-    req.on('error', err => {
+    req.on('error', (err) => {
       reject(err)
     })
 
     req.write(
       JSON.stringify({
         hash_algorithm: options.vaultHashAlgorithm,
-        batch_input: hashes.map(hash => ({
+        batch_input: hashes.map((hash) => ({
           input: hash
         }))
       })
