@@ -9,9 +9,11 @@ updates:
     directory: /
     schedule:
       interval: daily
-      groups:
-        typescript-eslint:
+    groups:
+      typescript-eslint:
+        patterns:
           - "@typescript-eslint/*"
-        rollup:
+      rollup:
+        patterns:
           - "rollup"
           - "@rollup/*"
